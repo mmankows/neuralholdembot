@@ -1,0 +1,19 @@
+g++ HoldemBot.cpp GameRunner.cpp -lfann -lm
+#
+
+
+http://mattmazur.com/2009/10/13/experimenting-with-a-neural-network-based-poker-bot/
+http://neuralnetworksanddeeplearning.com/chap1.htm
+https://esc.fnwi.uva.nl/thesis/centraal/files/f331635744.pd
+http://home.agh.edu.pl/~bziolko/old/art/JACS-1-2012-Ziolko.pd
+http://mattmazur.com/2009/10/13/experimenting-with-a-neural-network-based-poker-bot/
+
+
+-TESTOWANIE: platformie MIT mitpokerbots
+sciagnieta, na zasadzie klient serwer. Zaimplementowac protokół
+
+-OPCJONALNIE: Sieci per przeciwnik, ucząca się na bieżąco zachowań przeciwnika
+
+
+
+

@@ -1,0 +1,36 @@
+typy : 
+###1   prosty neuron liniowy:
+output = bias + Suma(wejście_x * waga_wejsiac_x) gdzie x kolejne inputy neurona
+
+###2 binary threshold neurons (McCulloch-Pitts Von Neumann)
+1.1 suma waga*wejscie
+1.2 wysylasz aktywnosc do nastepnych neuronów JESLI ta suma jest wieksza od zalozonego progu
+
+można zamodelować jako pierwszy typ neurnony, gdzie stała (Bias) = -próg
+
+###3 Rectified Linear Neurons (linear threshold neurons - polaczenie poprzendich
+- compute linear sum of weighted inputs
+- output not linear function of input
+
+###4 najpopularniejsze Sigmoid neurons
+- output real values input that is smooth and bounded function of input
+  rzeczywista funkcje ograniczona
+- typicaly use of logistic function to scale
+
+y=  1 / (1 + e ^ -z) , gdzie suma ważona wejść
+
+
+###5 Stochastic binary neurons 
+- uzywaja tego samego obliczania co Sigmoid neurons
+- zamiast outputu (wartosci funkcji) wykorzystuja wartosc funkcji jako prawodpodobiensto i losow zwracaja 1/0 z danym prawdopodobienstwem 
+
+
+
+######## Typy uczenia
+- supervised
+- reinforced - output = akcja, sekwencja akcji za która okazjonalnie jest przyznawana nagroda
+                        celem kazdej akcji jest maksymalizacja nagród w przyszłości, im szybciej nagroda tym lepiej
+
+  - to uczenie jest trudno, poniewaz nagroda nie przychodzi od razu, nie wiemy czy dane posuniecie bylo dobre/zle
+  - scalarna nagroda nie daje zbyt wielu informacji jak akcje wyplynely na wygrana
+  - w tym typie uczenia do nauki jest do tysiecy, a nie milionom parametrow jak w supervised

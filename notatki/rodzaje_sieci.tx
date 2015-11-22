@@ -1,0 +1,9 @@
+- sieci symetrczne (bez ukrytych layerow to sieci hopfielda)
+- sieci forward feed (tylko do przodu)
+- sieci rekurencyjne (trudne do nauki)
+    ( wyjscie danego neurona jest brane pod uwage jako jego wejscie przez jakis czas)
+
+
+
+
+/// perceptrony, z dobrymi ficzerami prawie wszystko, ciekzo praktycznie dobrac ficzery

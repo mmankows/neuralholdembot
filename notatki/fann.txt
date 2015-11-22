@@ -1,0 +1,6 @@
+format datasetu:
+- Pierwsza linijka: <liczba pojedynczych przykładów> <liczba wejsc> <liczba wyjsc>
+- Następnie pary
+  - wartosci wejsc
+  - wartosci wyjsc oczekiwane
+

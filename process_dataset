@@ -1,0 +1,243 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Data::Dumper;
+
+my $DEBUG = 0;
+my $my_name = 'pieskot';
+my $file_name = shift @ARGV || '';
+my $file_name_out = 'data/poker.train';
+
+##################################################################
+-e $file_name || die ("No such file - call ./process <FILE>\n");
+open( my $fh, $file_name ) || die("Can't open the file!\n");
+open( my $fh_out,'>', "/tmp/train") || die("Can't open the file!\n");
+##################################################################
+
+
+my @rounds =  ('PREFLOP','FLOP','TURN','RIVER');               #round names
+my @actions = ('folds','checks','calls','bets','raises to');  #possbile actions
+my @data_out;                                                 #output data
+
+my $total_snapshots = 0;
+my $output_features_cnt = 4;
+my $input_features_cnt = 9;
+my $parsed_lines = 0;
+my $hand_number  = -1;
+my $round;
+
+sub get_round_string   {
+    join ' ', map {sprintf('%0.5f', $_ eq $round ? 1 : 0) } @rounds
+}
+sub get_action_string {
+    my $action = shift;
+    join ' ', map {sprintf('%0.5f',$_ eq $action ? 1 : 0) } @actions
+}
+sub round_undict {
+    my $r = shift; 
+    $r eq 'HOLE CARDS' ? 'PREFLOP' : $r 
+}
+sub evaluate_hand {
+    my @cards = @_;
+
+    @cards = cards_to_ints(@cards);
+    # PRE-FLOP
+    if ( @cards == 2 ) {
+
+        return 0.5;
+    } else {
+        return 0.5;
+    }
+
+}
+
+
+my %color_score = (
+    s => 1,
+    c => 2,
+    h => 3,
+    d => 4
+);
+my %cards_score = ((map {$_=>$_-1} 2..9) , (T=>9,J=>10,Q=>11,K=>12,A=>13));
+
+sub cards_to_ints {
+    my (@cards) = @_;
+    foreach my $card(@cards) {
+        my ($f,$c) = split //, $card;
+        $card = $cards_score{$f} * $color_score{$c};
+    } 
+
+    print((join("|",@cards)) . "\n");
+    return @cards;
+
+}
+
+
+# prepare learning set at the time of decision
+sub snapshot {
+    my ($action,$amount) = @_;
+    $total_snapshots++;
+    my $current_hand = $data_out[$hand_number];
+
+    my @cards = (
+       @{ $current_hand->{my_cards} },
+       @{ $current_hand->{rounds}{$round}{cards} || [] }, 
+    );
+   
+    my $bb = $current_hand->{big_blind};
+    my $players_left = $current_hand->{players_in};
+
+    # INPUT FEATURES
+    my $pot           = ($current_hand->{total_pot}               ) / $bb;
+    my $round_pot     = ($current_hand->{rounds}{$round}{pot} || 0) / $bb; 
+    my $stack         = ($current_hand->{players}{$my_name}{stack}) / $bb;
+    my $round_str     = get_round_string();
+    my $hand_strength = evaluate_hand( @cards );
+    # my $action before
+    my $position = (($data_out[$hand_number]{rounds}{$round}{my_pos} || 0) +1) / ($players_left+1);
+       $position = 1 if $position > 1;
+
+
+    # moze jaka czesc puli dal w takiej sytuacji
+    
+    # OUTPUT FEATURES
+    $amount ||= 0;
+    $amount /= $pot;
+
+    my $input_features_str  = join(' ', (map {sprintf('%0.5f',$_)} ($hand_strength,$position,$pot,$round_pot,$stack)), $round_str);
+    my $output_features_str = join(' ', get_action_string($action), sprintf('%0.5f',$amount));
+    print $fh_out "$input_features_str\n$output_features_str\n";
+}
+
+# NFA
+my %NFA = (
+    # initial state before hand starts
+    0 => {
+        rx => qr/^FullTiltPoker Game/,
+        transaction => 1,
+        action => sub {
+            my $line = shift;
+            if ( $line =~ /^\*{4}/ ) {
+                $hand_number ++;
+            }
+        }
+    },
+    # Collecting players information and my position
+    1 => {
+        rx => qr/^.+ posts the small blind/,
+        transaction => 2,
+        action => sub {
+            my $line = shift;
+            if ( $line =~ /^Seat (\d+): ([^(]+) \(\$(.+)\)/ ) {  # parse seat number, stack, nickname
+                $data_out[$hand_number]{players}{$2} = {pos=>$1, stack=>$3};
+                $data_out[$hand_number]{players_in}  = $1; # count total number of players
+            }
+        }
+    },
+    # Reading dealer position and big blind
+    2 => {
+        rx => qr/^\*{3} HOLE/,
+        transaction => 3,
+        action => sub {
+            my $line = shift;
+            if ( $line =~ /^(.+) posts the (\w+) blind of \$([^ ,]+)/  ) {
+                $data_out[$hand_number]{rounds}{PREFLOP}{pot} += $3+0; #goes to pre-flop
+                $data_out[$hand_number]{total_pot}            += $3+0;
+                $data_out[$hand_number]{players}{$1}{stack}   -= $3+0;
+                $data_out[$hand_number]{"$2_blind"}            = $3+0;
+            } 
+            elsif ( $line =~ /^The button is in seat #(\d+)/ ) {
+                $data_out[$hand_number]{dealer_pos} = $1;
+            } 
+        }
+    },
+    # parsing round
+    3 => {
+        rx => qr/^\*{3} (SHOW DOWN|SUMMARY)/,
+        transaction => 4,
+        action => sub {
+            my $line = shift;
+
+            if( $line =~ /^\*{3} ([\w ]+) \*+(.+)/ ) {
+                $round = round_undict($1);
+                if ( $round ne 'PREFLOP' ) {
+                    $data_out[$hand_number]{rounds}{$round}{cards} = [ $2 =~ /[AKQJT98765432][sdhc]/g ];
+                }
+            } else {
+                # Parse actions
+                if( $line =~ /^(.+) (checks|folds)/ ) {
+                    if( $1 eq $my_name ) {
+                        $data_out[$hand_number]{rounds}{$round}{my_pos} 
+                        = $data_out[$hand_number]{rounds}{$round}{pos} 
+                        if not exists $data_out[$hand_number]{rounds}{$round}{my_pos}; 
+                        snapshot($2) 
+                    }
+                    if ($2 eq 'folds') {
+                        $data_out[$hand_number]{players_in}--;
+                    } else {
+                        $data_out[$hand_number]{rounds}{$round}{pos}++;
+                    }
+
+                } elsif ($line =~/^(.+) (calls|bets|raises to) \$([^ ,]+)/) {
+                    $data_out[$hand_number]{rounds}{$round}{pos}++;
+                    if( $1 eq $my_name ) {
+                        $data_out[$hand_number]{rounds}{$round}{my_pos} 
+                        = $data_out[$hand_number]{rounds}{$round}{pos} 
+                        if not exists $data_out[$hand_number]{rounds}{$round}{my_pos}; 
+                        snapshot($2,$3+0) 
+                    }
+                    $data_out[$hand_number]{players}{$1}{stack}  -= $3+0;
+                    $data_out[$hand_number]{rounds}{$round}{pot} += $3+0;
+                    $data_out[$hand_number]{total_pot}           += $3+0;
+
+                } elsif ($line =~ /^Dealt to $my_name (.+)/)  {
+                    $data_out[$hand_number]{my_cards} = [ $1 =~ /[AKQJT98765432][sdhc]/g ];
+                } else {
+                    #nothing, timeouts ectc
+                }
+            }
+
+        }
+    },
+    # who wins after showing cards
+    4 => {
+        rx => qr/^\s*$/,
+        transaction => 0,
+        action => sub {
+            my $line = shift;
+            @data_out = ();
+        }
+    }
+);
+
+
+
+my $STATE = 0;
+while ( my $line = <$fh> ) {
+    chomp $line;
+
+    if ( $line =~ /$NFA{ $STATE }{rx}/ ) {
+        $STATE = $NFA{ $STATE }{transaction};
+    }
+    $NFA{ $STATE }{ action }( $line );
+    if($DEBUG) {
+        print "[$STATE]$line";
+        <>;
+    }
+#    last if $hand_number == 20; 
+}
+close $fh;
+close $fh_out;
+
+my $heading = "$total_snapshots $input_features_cnt $output_features_cnt";
+qx(echo '$heading' > $file_name_out);
+qx(cat /tmp/train >> $file_name_out);
+unlink '/tmp/train';
+
+
+#print Dumper \@data_out;
+
+
+
+
+

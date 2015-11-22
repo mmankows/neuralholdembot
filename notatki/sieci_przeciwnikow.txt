@@ -1,0 +1,62 @@
+MODELOWANIE PRZECIWNIKA
+
+Niezwykle ważnym aspektem pokera jest znajomość i obserwacja taktyki gry oponentów.  W tym celu stworzono osobny model sieci neuronowej mający za zadanie zakodowanie sposobu gry przeciwnika. Taktykę przeciwnika można przykładowo zdefiniować jako prawdopodobieństwo wystąpienia zagrania w danej rundzie licytacji w stosunku do siły posiadanych przez niego kart.  
+
+WARSTWA WEJŚCIOWA
+Aplikując tę wiedzę do projektowania schematu sieci stworzono następującą warstwę neuronów wejściowych
+
+# Neurony wprowadzające informację o grze w kolejnych rundach licytacji
+[Pozycja przy stole Pre-Flop    ]
+[Aktywność Pre-Flop sprawdzenia ]  
+[Aktywność Pre-Flop podbicia    ]
+[Aktywność Pre-Flop przebicia   ]
+
+[Pozycja przy stole Flop        ]
+[Aktywność Pre-Flop sprawdzenia ]  
+[Aktywność Flop sprawdzenia     ]  
+[Aktywność Flop podbicia        ]
+[Aktywność Flop przebicia       ]
+
+[Pozycja przy stole Turn    ]
+[Aktywnoś  Turn sprawdzenia ]  
+[Aktywność Turn podbicia    ]
+[Aktywność Turn przebicia   ]
+
+[Pozycja przy stole River    ]
+[Aktywnoś  River sprawdzenia ]  
+[Aktywność River podbicia    ]
+[Aktywność River przebicia   ]
+
+[Siła kart przeciwnika Pre-Flop]
+[Siła kart przeciwnika Flop    ]
+[Siła kart przeciwnika Turn    ]
+[Siła kart przeciwnika River   ]
+
+[Czy pokazał Karty]
+[Czy wygrał] ?
+
+
+WARSTWA NEURONÓW WYJŚCIOWYCH
+- prawdopodobienstwa reakcji na dane zagranie ?
+- prawdopodobienstwo zwyciestwa przeciwnika   ?
+
+WYKORZYSTANIE
+Każdy z przeciwników przy stole otrzymuje własną instancję takiej sieci. Początkowo każda z sieci jest zainicjowana jednakowymi współczynnikiami, jednak z biegiem rozdań i podawaniem ich jako dane uczące parametry neuronów będą ulegać zmianie.
+Informacje z sieci modelujących przeciwników postanowiono wykorzystać jako wejście do głównej sieci podejmującej decyzje. 
+
+
+PRZEKMINY
+
+- przeciwnicy z taktyką czy bez taktyki, tak sieć jest dobrym podejściem - bo brak określonego sposobu gry powoduje utrzymanie prawdopodobieństw wyjściowych na podobnym poziomie
+
+- Inicjowanie -uczenie na permutacjach wejść oczekując neutralnych  wyników w każdej cesze na wyjściu
+
+- Moze by mierzyć aktywność ilością dorzucanych pieniędzy wkładanych w zagranie lub przy akcji +1 do kazdego wyznacznika aktywnosci
+ estymować ile jest w stanie włożyć w dane zagranie
+Pieniędzmi może lepiej, bo pokazuje faktyczne zaanagazowanie, przebicie o blinda przebiciu o 10 nierówne
+Z drugiej strony liczba re-reisow swiadczy o wiekszej agresywnosci
+
+- przepuszczenie mozliwych scenariuszy na ruch do przodu i sprawdzenie dopasowania? dobór takiego zagrania aby przeciwnik przegrał!
+
+
+
