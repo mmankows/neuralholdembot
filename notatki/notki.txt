@@ -17,3 +17,17 @@ sciagnieta, na zasadzie klient serwer. Zaimplementowac protokół
 
 
 
+=======================================================
+make learning to be real learning
+- input features (round,pos,hand rank, enemy estimate etc)
+- output (decision)
+
+learning
+- random games with bots
+x% chance for random move, (100-x)% for tought move (percent fixed)
+- every won game has a y% chance to become a training data, related to won_stack/round_number
+
+
+
+
+

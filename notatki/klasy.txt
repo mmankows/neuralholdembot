@@ -1,0 +1,16 @@
+# HoldemBot  - główna klasa podejmująca decyzje, przechowuje sieć neurnonową, uczy
+Decision decide(GameState current_state); //pobiera decyzje do wykonania na podstawie stau gry
+void     save(file_name saved_net_path); //zapisuje sieć neuronową do pliku
+void     load(file_name saved_net_path); //wczytuje sieć z pliku
+void     train(std::vector<GameState> game_states); //
+
+
+# Decision - klasa decyzji, zawiera decyzje do podjęcia
+enumy: D_FOLD,D_CHECK,D_CALL,D_BET,D_RAISE
+
+#################
+
+
+# GameState - aktualny stan rozdania, mapowanie na ficzery sieci neuronowej
+bool update(std::string game_state_string);
+std::string resp(Decision decision);

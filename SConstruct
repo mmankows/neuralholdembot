@@ -5,5 +5,5 @@ import os
 newpath=os.environ.get('PATH')
 env = Environment(ENV = { 'PATH' : newpath })
 
-boost_libs = ['boost_program_options', 'boost_system','pthread','fann']
-env.Program('holdembot', ['src/main.cpp','src/HoldemBot.cpp','src/HoldemGame.cpp'], LIBS=boost_libs)
+libs = ['boost_program_options', 'boost_system','pthread','fann']
+env.Program('holdembot', ['src/main.cpp','src/HoldemBot.cpp','src/Game.cpp', 'src/GameState.cpp','src/Utils.cpp'], LIBS=libs)

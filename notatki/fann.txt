@@ -4,3 +4,5 @@ format datasetu:
   - wartosci wejsc
   - wartosci wyjsc oczekiwane
 
+
+- wejścia i wyjścia w przedziale 0-1 !!!
