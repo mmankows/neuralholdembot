@@ -1,4 +1,6 @@
 #include "Utils.h"
+#include "FiveEval.h"
+#include "SevenEval.h"
 
 
 std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
@@ -15,6 +17,36 @@ std::vector<std::string> split(const std::string &s, char delim) {
     split(s, delim, elems);
     return elems;
 }
+
+float score_cards(std::vector<std::string> cards_str) {
+    std::vector<int> cards;
+    for(int i=0; i<cards_str.size(); i++) { // convert cards to integers
+        cards.push_back( card2int(cards_str[i]) );
+    }
+
+    int rank = 0;
+    SevenEval const eval7;
+    FiveEval  const eval5;
+    switch ( cards.size() ) {
+        case 2: rank=score_2_cards(cards[0],cards[1]); break;
+        case 5: rank=eval5.GetRank(cards[0],cards[1],cards[2],cards[3],cards[4]); break;
+        case 6: 
+                for(int i=0; i<6; i++) {
+                    std::vector<int> cpy = cards;
+                    cpy.erase(cpy.begin() + i );
+
+                    int new_rank = eval5.GetRank(cpy[0],cpy[1],cpy[2],cpy[3],cpy[4]);
+                    rank = rank < new_rank ? new_rank : rank;
+                }
+                break;
+        case 7: rank=eval7.GetRank(cards[0],cards[1],cards[2],cards[3],cards[4],cards[5],cards[6]); break;
+        default: rank=0;
+    }
+
+    return (rank/100);
+}
+
+float score_2_cards(int c1, int c2) {return 0.5;}
 
 int card2int(std::string card) {
     char face = card.at(0);

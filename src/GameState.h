@@ -8,36 +8,55 @@
     #include "Constants.h"
     #include "Decision.h"
 
+//TODO mozna by tez wrzucac do sieci jakie decyzje byly mozliwe do podjecia, to by nam zalatwialo troche sytruacje na stole
 class GameState {
 private:
     static std::map<std::string,bool> OPPONENTS;
     static int BB; //big blind
     static int MAX_STACK; //starting stack size
+    int _round,_position,_stack,_pot,_card_rank;
     
+    //what are legal decision in a given state
     std::vector<Decision> _possible_decisions;
+    //which decision was made in this state
+    Decision _decision_made;
+    //my hand cards
+    std::vector<std::string> _my_cards;
     
 public:
-    GameState() {}
+    GameState() {
+        _round=PREFLOP;
+        _position=BUTTON;
+        _stack=_pot=_card_rank;
+    }
 
     std::vector<Decision> possible_decisions();
     
-    // game data
+    // shared hand data
     static void add_opponent(std::string);
     static int max_stack() { return GameState::MAX_STACK; }
     static int big_blind() { return GameState::BB; }
-    int round();
-    int position();
-    int stack();
-    int round_pot();
-    int total_pot();
-    int card_rank(); 
+    static int opp_number() { return GameState::OPPONENTS.size(); }
+
+    // different at each decision
+    int round()    { return _round;}
+    int position() { return _position;}
+    int stack()    { return _stack;};
+    int pot()      { return _pot;}
+    int card_rank(){ return _card_rank;} 
     
-    fann_type* as_fann_data();
+    // save what was decided
+    void set_decision_made(Decision d) { _decision_made = d; }
+    Decision decision_made() { return _decision_made; }
 
     // parsing engine messages
-    bool parse_newgame( std::string line );
+    static bool parse_newgame( std::string line );
     bool parse_newhand( std::string line );
     bool parse_getaction( std::string line );
     bool parse_handover( std::string line ) {};
+    
+    // get as fann learining format (fann_type tab)
+    fann_type* input_as_fann_data();
+    fann_type* output_as_fann_data();
 };
 #endif

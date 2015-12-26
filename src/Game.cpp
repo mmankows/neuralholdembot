@@ -41,12 +41,14 @@ void Game::play(tcp::iostream &stream) {
         std::string hand_over("HANDOVER");
         std::string directive = line.substr(0, line.find_first_of(' '));
 
-        //init new state for new hand
+        //game has stareted
         if( new_game == directive ) {
-            state = GameState();
-            state.parse_newgame(line);
+            GameState::parse_newgame(line);
+        //start of new hand
         } else if( new_hand == directive ) {
+            state = GameState();
             state.parse_newhand(line);
+        //time for decision
         } else if( get_action == directive ) {
             state.parse_getaction(line);
 
@@ -54,13 +56,15 @@ void Game::play(tcp::iostream &stream) {
              
             // Respond with CHECK when playing, you'll want to change this.
             std::cout<<"MY DECISION="<<decision.get()<<std::endl;
-            stream << "CHECK\n";
+            stream << decision.get() << std::endl;
             game_states.push_back( state );
+        //hand is over
         } else if ( hand_over == directive ) {
             state.parse_handover(line);
 
             mybot.train( game_states );
             game_states.clear();
+        //not used
         } else if (request_keyvalue_action == directive ) {
             stream << "FINISH\n";
         }

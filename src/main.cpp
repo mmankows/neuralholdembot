@@ -7,17 +7,15 @@
 #include "fann.h"
 #include "HoldemBot.h"
 #include "Game.h"
+#include "Utils.h"
 
 namespace opt = boost::program_options;
 int main(int argc, char *argv[])
 {
-      // Parse out command line options.
-      // Usage: pokerbot [-h HOST] PORT
-
     std::string host               = "localhost";
     std::string training_file_path = "";
     std::string network_file_path  = "";
-    int port;
+    int port = 3000;
     opt::options_description desc("Allowed options");
     desc.add_options()
       ("host,h",  opt::value<std::string>(&host), "HOST")

@@ -64,6 +64,18 @@ fann_type* HoldemBot::query(std::vector<float> inputs) {
 }
 
 Decision HoldemBot::decide( GameState& state ) {
+    std::vector<Decision> possible = state.possible_decisions();
+    
+    std::cout<<"Round: "<<state.round()
+             <<"Position: "<<state.position()
+             <<"Stack: " <<state.stack()
+             <<"CRank: " <<state.card_rank()
+             <<"\n";
+    std::cout<<"POSSIBLE DECISIONS: \n";
+    for(int i=0; i<possible.size(); i++) {
+        std::cout<<possible[i].get()<<"\n";
+    }
+
     return random_decision(state);
     //TODO or decision from neural network
 }
@@ -73,6 +85,8 @@ Decision HoldemBot::random_decision( GameState& state ) {
    
     Decision decision = possible[ rand() % possible.size() ];
     decision.amount = (rand() % decision.max_amount) - decision.min_amount;
+
+    state.set_decision_made( decision );
     return decision;
 }
 

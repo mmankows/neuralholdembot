@@ -5,6 +5,7 @@
     #include <string>
     #include "fann.h"
     #include "Constants.h"
+    #include "Utils.h"
 
     
 using boost::lexical_cast;
@@ -17,36 +18,11 @@ public:
     int type;
 
     Decision() {}
-    Decision(int type, int min_amount, int max_amount) {
-        this->min_amount = min_amount;
-        this->max_amount = max_amount;
-        this->type = type;
-    }
+    Decision(int type, int min_amount, int max_amount);
+    Decision(std::string raw_decision);
 
     // get decision string for given amount
-    std::string get() {
-        
-        amount = amount<max_amount?amount:max_amount;
-        amount = amount>min_amount?amount:min_amount;
-        std::string amount_str = boost::lexical_cast<std::string>(amount);
-
-        switch( type ) {
-            case FOLD:
-                return std::string("FOLD");
-            case CHECK:
-                return std::string("CHECK");
-            case CALL:
-                amount_str = boost::lexical_cast<std::string>(max_amount);
-                return std::string("CALL:") + amount_str;
-            case BET:
-                return std::string("BET:") + amount_str;
-            case RAISE:
-                return std::string("RAISE:") + amount_str;
-            default: //checking is always valid
-                return std::string("CHECK");
-        }
-    }
-
+    std::string get();
 };
 
 #endif
