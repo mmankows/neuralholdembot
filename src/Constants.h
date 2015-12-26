@@ -22,8 +22,8 @@
 #define BUTTON 1
     
 // neural network parameters
+#define INPUT_FEATURES_COUNT  13
 #define OUTPUT_FEATURES_COUNT 6
-#define INPUT_FEATURES_COUNT  6
 #define LAYERS_COUNT          3
 #define NEURONS_HIDDEN_COUNT  50
 

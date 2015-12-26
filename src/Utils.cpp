@@ -80,3 +80,10 @@ int card2int(std::string card) {
 
     return face_int + suit_int;
 }
+
+float scale(int val, int min, int max) {
+    float n = 2 * (float(val-min)/float(max-min) - 0.5);
+    n = n < -1 ? -1 : n;
+    n = n >  1 ?  1 : n;
+    return n;
+}

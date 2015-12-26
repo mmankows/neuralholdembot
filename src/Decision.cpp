@@ -12,6 +12,7 @@ Decision::Decision(std::string raw_decision) {
     int ntokens = tokens.size();
     std::string action = tokens[0];
 
+
     if ( ntokens == 1 ) {
         if( action == std::string("FOLD") ) {
             this->type = FOLD;

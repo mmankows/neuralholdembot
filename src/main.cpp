@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
 
     // Initialization of bot
     HoldemBot mybot;
+    mybot.set_rand_factor(100);
     if ( vm.count("net") ) {
         mybot.load(network_file_path);
     }  

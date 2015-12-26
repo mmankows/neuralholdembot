@@ -27,7 +27,6 @@ public:
     GameState() {
         _round=PREFLOP;
         _position=BUTTON;
-        _stack=_pot=_card_rank;
     }
 
     std::vector<Decision> possible_decisions();
@@ -50,10 +49,10 @@ public:
     Decision decision_made() { return _decision_made; }
 
     // parsing engine messages
-    static bool parse_newgame( std::string line );
-    bool parse_newhand( std::string line );
-    bool parse_getaction( std::string line );
-    bool parse_handover( std::string line ) {};
+    static void parse_newgame( std::string line );
+    void parse_newhand( std::string line );
+    void parse_getaction( std::string line );
+    int parse_handover( std::string line ); //return won prize
     
     // get as fann learining format (fann_type tab)
     fann_type* input_as_fann_data();

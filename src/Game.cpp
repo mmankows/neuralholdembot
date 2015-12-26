@@ -55,14 +55,13 @@ void Game::play(tcp::iostream &stream) {
             Decision decision = mybot.decide(state);
              
             // Respond with CHECK when playing, you'll want to change this.
-            std::cout<<"MY DECISION="<<decision.get()<<std::endl;
+//            std::cout<<"MY DECISION="<<decision.get()<<std::endl;
             stream << decision.get() << std::endl;
             game_states.push_back( state );
         //hand is over
         } else if ( hand_over == directive ) {
-            state.parse_handover(line);
-
-            mybot.train( game_states );
+            int prize = state.parse_handover(line);
+            mybot.train( prize, game_states );
             game_states.clear();
         //not used
         } else if (request_keyvalue_action == directive ) {
