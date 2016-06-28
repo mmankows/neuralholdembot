@@ -22,3 +22,11 @@ TODO
 OTHER:
 
 - build SpecialKEval subrepo first, its not added to scons because its usage should be exchanged with something else
+
+STRUCTURE:
+
+- ./src: source code
+- ./inc: header files
+- ./mitbots: mitpokerbots testing platform
+- ./data: some runtime data like currently used neutal network and saved trained networks
+
