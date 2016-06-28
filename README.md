@@ -15,10 +15,10 @@ DOCS:
 
 Comments and source code of course :)
 
-OTHER:
-
-- build SpecialKEval subrepo first, its not added to scons
-
 TODO
 
 - provide some reasonable way of scoring cards strength 
+
+OTHER:
+
+- build SpecialKEval subrepo first, its not added to scons because its usage should be exchanged with something else
