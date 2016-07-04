@@ -1,7 +1,7 @@
 DESCRIPTION:
 
-Poker bot enging based on FANN framework written in C++ as practical and exprimental part of Bachelor's thesis.
-Require slightly more development to be perfect. Project finished in Jan 2016.
+Poker bot engine based on FANN framework written in C++ as practical and exprimental part of Bachelor's thesis.
+Require slightly more development to be perfect. Project finished in Jan 2016. Learning process involves reinforcement incremental learning.
 
 HOWTO:
 
