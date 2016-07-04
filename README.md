@@ -1,3 +1,8 @@
+DESCRIPTION:
+
+Poker bot enging based on FANN framework written in C++ as practical and exprimental part of Bachelor's thesis.
+Require slightly more development to be perfect. Project finished in Jan 2016.
+
 HOWTO:
 
 - install 'scons' tools to proces SConstruct make file
@@ -7,7 +12,7 @@ HOWTO:
 
 EXTERNAL DEPENDENCIES:
 
-- mitpokerbots: engine desinged for poger bots championship released by MIT and available on their website (mitbots directory)
+- mitpokerbots: engine designed for poker bots championship released by MIT and available on their website (mitbots directory)
 - FANN framework: neural networks framework (fann subrepo)
 - SpecialKEval: naive tool for scoring hands (SpecialKEval subrepo)
 
@@ -17,7 +22,7 @@ Comments and source code of course :)
 
 TODO
 
-- provide some reasonable way of scoring cards strength 
+- provide some better way of scoring cards strength 
 
 OTHER:
 
